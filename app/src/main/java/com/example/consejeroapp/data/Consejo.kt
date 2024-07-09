@@ -2,11 +2,12 @@ package com.example.consejeroapp.data
 
 import android.provider.BaseColumns
 
-data class Consejo(var id: Int = -1, var texto: String, var leida : Boolean = false, var favorita: Boolean = false ) {
+data class Consejo(var id: Int = -1, var texto: String, var cota: Int = 0, var leida : Boolean = false, var favorita: Boolean = false ) {
 
     companion object{
         const val TABLE_NAME = "Consejo"
         const val COLUMNA_TEXTO = "texto"
+        const val COLUMNA_COTA = "cota"
         const val COLUMNA_LEIDA = "leida"
         const val COLUMNA_FAVORITA = "favorita"
 
@@ -14,6 +15,7 @@ data class Consejo(var id: Int = -1, var texto: String, var leida : Boolean = fa
             "CREATE TABLE $TABLE_NAME (" +
                     "${BaseColumns._ID} INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMNA_TEXTO TEXT," +
+                    "$COLUMNA_COTA INTEGER," +
                     "$COLUMNA_LEIDA INTEGER," +
                     "$COLUMNA_FAVORITA INTEGER)"
 

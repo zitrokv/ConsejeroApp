@@ -9,13 +9,17 @@
 
     android:orientation="vertical">
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/celdaCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:background="#531414"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="8dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:onClick="p1_bay">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -50,14 +54,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginTop="3dp"
-                android:background="@drawable/ic_delete" />
+                android:background="@drawable/ic_delete"
+                android:visibility="invisible"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
                 <androidx.constraintlayout.utils.widget.MotionLabel
-                    android:id="@+id/fechaLimiteLabel"
+                    android:id="@+id/textoLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -65,9 +70,9 @@
                     android:layout_marginEnd="9dp"
                     android:padding="1dp"
                     android:background="@color/material_dynamic_neutral90"
-                    android:text="F.Alta: 04 JUL 24"
-                    android:textAlignment="textEnd"
-                    android:textSize="14dp"
+                    android:text="Remember that spiders are more afraid of you, than you are of them."
+                    android:textAlignment="center"
+                    android:textSize="12dp"
                     android:textStyle="italic"
                     tools:ignore="RtlCompat" >
 
@@ -79,7 +84,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="89dp"
                     android:layout_gravity="right"
-                    android:background="@drawable/ic_edit" />
+                    android:background="@drawable/ic_edit"
+                    android:visibility="invisible"/>
 
                 <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:id="@+id/addTaskButton"
@@ -94,6 +100,7 @@
                     android:visibility="gone">
 
                 </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
+
             </FrameLayout>
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -106,6 +113,21 @@
                 android:src="@drawable/ic_default_categorie"
                 app:strokeColor="#ff0000" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/infoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_margin="27dp"
+                android:paddingEnd="0dp"
+                android:src="@drawable/ic_add"
+                android:tint="#ABAC7F"
+                android:background="#ABAC7F"
+                android:textAlignment="center"
+                android:elegantTextHeight="false"
+                android:textSize="29dp"
+                android:text="00"
+                tools:ignore="RtlCompat" />
 
             <RatingBar
                 style="?android:attr/ratingBarStyleIndicator"

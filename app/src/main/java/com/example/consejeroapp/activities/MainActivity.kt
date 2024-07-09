@@ -3,10 +3,12 @@ package com.example.consejeroapp.activities
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     private lateinit var adapter: ConsejoAdapter
-    private lateinit var taskDAO: ConsejoDAO
+    private lateinit var consejoDAO: ConsejoDAO
     lateinit var consejoList: List<Consejo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        taskDAO = ConsejoDAO(this)
-        taskDAO.insert(Consejo(-1, "Ir al banco"))
-        taskDAO.insert(Consejo(-1, "Entrenar"))
+        consejoDAO = ConsejoDAO(this)
+        consejoDAO.insert(Consejo(-1, "Ir al banco"))
+        consejoDAO.insert(Consejo(-1, "Entrenar"))
 
         adapter = ConsejoAdapter(
             emptyList(), {
@@ -43,18 +45,14 @@ class MainActivity : AppCompatActivity() {
                 ).show()*/
             },
             {
-                taskDAO.delete(consejoList[it])
-                /*Toast.makeText(
-                    this,
-                    "Click en ${tareaList[it].nombre}",
-                    Toast.LENGTH_LONG
-                ).show()*/
+                consejoDAO.delete(consejoList[it])
+                consejoDAO.update(consejoList[it])
                 loadData()
             },
 
             {
                 consejoList[it].leida = !consejoList[it].leida
-                taskDAO.update(consejoList[it])
+                consejoDAO.update(consejoList[it])
                 loadData()
             },
             {
@@ -76,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        consejoList = taskDAO.findAll()
+        consejoList = consejoDAO.findAll()
 
         adapter.updateData(consejoList)
     }
@@ -180,5 +178,9 @@ class MainActivity : AppCompatActivity() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    fun p1_bay(view: View?) {
+        Toast.makeText(this, "You have clicked P1", Toast.LENGTH_LONG).show()
     }
 }

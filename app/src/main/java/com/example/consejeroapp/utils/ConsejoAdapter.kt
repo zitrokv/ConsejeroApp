@@ -35,7 +35,14 @@ class ConsejoAdapter(private var dataSet: List<Consejo> = emptyList(),
             //onItemClickListener(position)
             onItemClickListener(holder.adapterPosition) // es la posicion más real, se calcula dinamicamente!!
         }
+
+        //pulsar en papelera
         holder.binding.deleteImageButton.setOnClickListener(){
+            onDeleteClickListener(holder.adapterPosition)
+        }
+
+        //pulsar en cardview
+        holder.binding.celdaCardView.setOnClickListener(){
             onDeleteClickListener(holder.adapterPosition)
         }
 

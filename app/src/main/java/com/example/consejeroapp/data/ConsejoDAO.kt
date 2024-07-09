@@ -8,15 +8,16 @@ import com.example.listadotareasapp.utils.DatabaseManager
 class ConsejoDAO(context: Context) {
     private val databaseManager: DatabaseManager = DatabaseManager(context)
 
-    fun insert(tarea: Consejo){
+    fun insert(consejo: Consejo){
         val db = databaseManager.writableDatabase
 
         val values = ContentValues()
-        values.put(Consejo.COLUMNA_TEXTO, tarea.texto)
-        values.put(Consejo.COLUMNA_LEIDA, tarea.leida)
+        values.put(Consejo.COLUMNA_TEXTO, consejo.texto)
+        values.put(Consejo.COLUMNA_COTA, consejo.cota)
+        values.put(Consejo.COLUMNA_LEIDA, consejo.leida)
 
         val newRowId = db.insert(Consejo.TABLE_NAME, null, values)
-        tarea.id = newRowId.toInt()
+        consejo.id = newRowId.toInt()
     }
 
     fun update(consejo: Consejo){
@@ -32,7 +33,33 @@ class ConsejoDAO(context: Context) {
             "${BaseColumns._ID} = ${consejo.id}",
             null
         )
+
+        if (updatedRows == 0)
+            upLevel()
+
+        db.close()
     }
+
+    private fun upLevel(){
+        val AllList = findAll()
+        val dbLevel = databaseManager.writableDatabase
+        var values = ContentValues()
+        AllList.forEach{
+            values.clear()
+            //values.put(Consejo.COLUMNA_TEXTO, it.texto)
+            values.put(Consejo.COLUMNA_COTA, it.cota++)
+            //se actualizan todos en cada ciclo, no recogemos rowsAffected
+            val updatedRows = dbLevel.update(
+                Consejo.TABLE_NAME,
+                values,
+                "${BaseColumns._ID} = ${it.id}",
+                null
+            )
+        }
+        dbLevel.close()
+
+    }
+
 
     fun delete(tarea:Consejo)
     {
@@ -43,7 +70,7 @@ class ConsejoDAO(context: Context) {
     fun find(id: Int):Consejo? {
 
         val db = databaseManager.readableDatabase
-        val projection = arrayOf(BaseColumns._ID, Consejo.COLUMNA_TEXTO, Consejo.COLUMNA_LEIDA)
+        val projection = arrayOf(BaseColumns._ID, Consejo.COLUMNA_TEXTO, Consejo.COLUMNA_COTA, Consejo.COLUMNA_LEIDA)
 
         val cursor = db.query(
             Consejo.TABLE_NAME,
@@ -59,8 +86,9 @@ class ConsejoDAO(context: Context) {
         if (cursor.moveToNext()){
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_TEXTO))
+            val cota = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_COTA))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_LEIDA)) == 1
-            tarea = Consejo(id, name, done)
+            tarea = Consejo(id, name, cota, done)
         }
 
         cursor.close()
@@ -70,7 +98,7 @@ class ConsejoDAO(context: Context) {
     fun findAll() : List<Consejo> {
         val db = databaseManager.readableDatabase
 
-        val projection = arrayOf(BaseColumns._ID, Consejo.COLUMNA_TEXTO, Consejo.COLUMNA_LEIDA)
+        val projection = arrayOf(BaseColumns._ID, Consejo.COLUMNA_TEXTO, Consejo.COLUMNA_COTA, Consejo.COLUMNA_LEIDA)
 
         val cursor = db.query(
             Consejo.TABLE_NAME,                        // The table to query
@@ -86,8 +114,9 @@ class ConsejoDAO(context: Context) {
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_TEXTO))
+            val cota = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_COTA))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_LEIDA)) == 1
-            val task = Consejo(id, name, done)
+            val task = Consejo(id, name, cota, done)
             tasks.add(task)
         }
         cursor.close()
