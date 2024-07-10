@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
@@ -16,7 +17,15 @@ import com.example.consejeroapp.data.Consejo
 import com.example.consejeroapp.data.ConsejoDAO
 import com.example.consejeroapp.databinding.ActivityMainBinding
 import com.example.consejeroapp.utils.ConsejoAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 import java.util.Calendar
+import javax.net.ssl.HttpsURLConnection
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,10 +40,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val id = intent.getStringExtra(Consejo.PUTEXTRA_ID)
 
         consejoDAO = ConsejoDAO(this)
-        consejoDAO.insert(Consejo(-1, "Ir al banco"))
-        consejoDAO.insert(Consejo(-1, "Entrenar"))
+        //consejoDAO.insert(Consejo(-1, "Ir al banco"))
+        //consejoDAO.insert(Consejo(-1, "Entrenar"))
+
 
         adapter = ConsejoAdapter(
             emptyList(), {
@@ -65,6 +76,9 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(this, 2)
         //binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+
+        evaluaBusqueda(id)
     }
 
     override fun onResume() {
@@ -180,7 +194,107 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun evaluaBusqueda(codigo:String?)
+    {
+        if (codigo == null)
+            obtenerConsejos()
+        else
+            obtenerConsejosByQuery(codigo)
+
+
+
+    }
+
     fun p1_bay(view: View?) {
         Toast.makeText(this, "You have clicked P1", Toast.LENGTH_LONG).show()
     }
+
+    fun obtenerConsejos() {
+        // Llamada en hilo secundario
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Declaramos la url
+                val url = URL("https://api.adviceslip.com/advice")
+                val con = url.openConnection() as HttpsURLConnection
+                con.requestMethod = "GET"
+                val responseCode = con.responseCode
+                Log.i("HTTP", "Response Code :: $responseCode")
+
+                // Preguntamos si hubo error o no
+                if (responseCode == HttpsURLConnection.HTTP_OK) { // Ha ido bien
+                    // Metemos el cuerpo de la respuesta en un BurfferedReader
+                    val bufferedReader = BufferedReader(InputStreamReader(con.inputStream))
+                    var inputLine: String?
+                    val response = StringBuffer()
+                    while (bufferedReader.readLine().also { inputLine = it } != null) {
+                        response.append(inputLine)
+                    }
+                    bufferedReader.close()
+
+                    // Parsear JSON
+                    val json = JSONObject(response.toString())
+                    val result =  json.getJSONObject("slip").getString("advice")
+
+                    // Ejecutamos en el hilo principal
+                    /*CoroutineScope(Dispatchers.Main).launch {
+
+                    }*/
+                    runOnUiThread {
+                        mostrarDialog(result.toString(),result.toString(),false)
+                        //evaluaBusqueda(result.toString())
+                    }
+
+                } else { // Hubo un error
+                    Log.w("HTTP", "Response :: Hubo un error")
+                }
+            } catch (e: Exception) {
+                Log.e("HTTP", "Response Error :: ${e.stackTraceToString()}")
+            }
+        }
+    }
+
+    fun obtenerConsejosByQuery(query:String) {
+        // Llamada en hilo secundario
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Declaramos la url
+                //val url = URL("https://api.adviceslip.com/advice")
+                val url = URL("https://api.adviceslip.com/advice/search/$query")
+                val con = url.openConnection() as HttpsURLConnection
+                con.requestMethod = "GET"
+                val responseCode = con.responseCode
+                Log.i("HTTP", "Response Code :: $responseCode")
+
+                // Preguntamos si hubo error o no
+                if (responseCode == HttpsURLConnection.HTTP_OK) { // Ha ido bien
+                    // Metemos el cuerpo de la respuesta en un BurfferedReader
+                    val bufferedReader = BufferedReader(InputStreamReader(con.inputStream))
+                    var inputLine: String?
+                    val response = StringBuffer()
+                    while (bufferedReader.readLine().also { inputLine = it } != null) {
+                        response.append(inputLine)
+                    }
+                    bufferedReader.close()
+
+                    // Parsear JSON
+                    val json = JSONObject(response.toString())
+                    val result =  json.getJSONObject("slip").getString("advice")
+
+                    // Ejecutamos en el hilo principal
+                    /*CoroutineScope(Dispatchers.Main).launch {
+
+                    }*/
+                    runOnUiThread {
+                        mostrarDialog(result.toString(),result.toString(),false)
+                    }
+
+                } else { // Hubo un error
+                    Log.w("HTTP", "Response :: Hubo un error")
+                }
+            } catch (e: Exception) {
+                Log.e("HTTP", "Response Error :: ${e.stackTraceToString()}")
+            }
+        }
+    }
+
 }

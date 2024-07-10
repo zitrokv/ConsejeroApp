@@ -79,6 +79,7 @@ class TareaViewHolder(val binding: ItemMainBinding) : RecyclerView.ViewHolder(bi
     fun render(tarea: Consejo){
         binding.nameTextView.text = tarea.texto
         binding.realizadoCheckBox.isChecked = tarea.leida
+        binding.infoCount.setText(if (tarea.cota.toString().length < 2) {"0"+ tarea.cota.toString()} else {tarea.cota.toString()})
     }
 
     // Subraya el texto que coincide con la busqueda
@@ -98,5 +99,6 @@ class TareaViewHolder(val binding: ItemMainBinding) : RecyclerView.ViewHolder(bi
         str.setSpan(BackgroundColorSpan(Color.rgb(244,144,255)), startIndex, startIndex + text.length, 0)
         return str
     }
+
 
 }

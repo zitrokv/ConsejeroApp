@@ -6,6 +6,7 @@ data class Consejo(var id: Int = -1, var texto: String, var cota: Int = 0, var l
 
     companion object{
         const val TABLE_NAME = "Consejo"
+        const val PUTEXTRA_ID = "ADVICE_ID"
         const val COLUMNA_TEXTO = "texto"
         const val COLUMNA_COTA = "cota"
         const val COLUMNA_LEIDA = "leida"
@@ -20,5 +21,7 @@ data class Consejo(var id: Int = -1, var texto: String, var cota: Int = 0, var l
                     "$COLUMNA_FAVORITA INTEGER)"
 
         const val SQL_DROP_TABLE ="DROP TABLE IF EXISTS $TABLE_NAME"
+
+        const val SQL_UPDATE_COTA = "UPDATE $TABLE_NAME SET COTA = COTA + 1"
     }
 }

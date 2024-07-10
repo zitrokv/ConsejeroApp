@@ -23,4 +23,8 @@ class DatabaseManager(context:Context) : SQLiteOpenHelper(context,DATABASE_NAME,
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         onUpgrade(db, oldVersion, newVersion)
     }
+
+    fun onUpdateCota(db:SQLiteDatabase){
+        db.execSQL(Consejo.SQL_UPDATE_COTA)
+    }
 }

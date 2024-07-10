@@ -2,6 +2,7 @@ package com.example.consejeroapp.data
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns
 import com.example.listadotareasapp.utils.DatabaseManager
 
@@ -35,29 +36,14 @@ class ConsejoDAO(context: Context) {
         )
 
         if (updatedRows == 0)
-            upLevel()
+            upLevel(consejo.id, db)
 
-        db.close()
+        //db.close()
     }
 
-    private fun upLevel(){
-        val AllList = findAll()
-        val dbLevel = databaseManager.writableDatabase
-        var values = ContentValues()
-        AllList.forEach{
-            values.clear()
-            //values.put(Consejo.COLUMNA_TEXTO, it.texto)
-            values.put(Consejo.COLUMNA_COTA, it.cota++)
-            //se actualizan todos en cada ciclo, no recogemos rowsAffected
-            val updatedRows = dbLevel.update(
-                Consejo.TABLE_NAME,
-                values,
-                "${BaseColumns._ID} = ${it.id}",
-                null
-            )
-        }
-        dbLevel.close()
-
+    private fun upLevel(id: Int, dbLevel: SQLiteDatabase){
+        //se actualizan todos en cada ciclo, no recogemos rowsAffected
+        databaseManager.onUpdateCota(dbLevel)
     }
 
 
