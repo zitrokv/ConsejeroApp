@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.consejeroapp.R
 import com.example.consejeroapp.data.Consejo
+import com.example.consejeroapp.data.ConsejoDAO
 import com.example.consejeroapp.databinding.ActivityBuscaBinding
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope

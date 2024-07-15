@@ -17,6 +17,7 @@ import com.example.consejeroapp.data.Consejo
 import com.example.consejeroapp.data.ConsejoDAO
 import com.example.consejeroapp.databinding.ActivityMainBinding
 import com.example.consejeroapp.utils.ConsejoAdapter
+import com.example.consejeroapp.utils.Funciones
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,13 +43,18 @@ class MainActivity : AppCompatActivity() {
 
         val id = intent.getStringExtra(Consejo.PUTEXTRA_ID)
 
-        consejoDAO = ConsejoDAO(this)
-        //consejoDAO.insert(Consejo(-1, "Ir al banco"))
-        //consejoDAO.insert(Consejo(-1, "Entrenar"))
+        Funciones.GuardaResultadoConsulta(this, (id))
+                /*
+                Funciones.GuardaResultadoConsulta(this, (id
+            ?: (Funciones.GuardaResultadoAleatorio((this))) ))
+*/
+                consejoDAO = ConsejoDAO (this)
+                //consejoDAO.insert(Consejo(-1, "Ir al banco"))
+                //consejoDAO.insert(Consejo(-1, "Entrenar"))
 
 
-        adapter = ConsejoAdapter(
-            emptyList(), {
+                adapter = ConsejoAdapter (
+                emptyList(), {
                 /*Toast.makeText(
                     this,
                     "Click en ${tareaList[it].nombre}",
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             },
             {
                 //showDialog()
-                mostrarDialog("Modificar tarea", consejoList[it].texto)
+                //mostrarDialog("Modificar tarea", consejoList[it].texto)
                 loadData()
             }
         )
@@ -88,8 +94,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
+        //consejoDAO.insert(Consejo())
+        //llamada a API para obtener por query
+        Funciones.Companion.obtenerConsejosByQuery(intent.getStringExtra(Consejo.PUTEXTRA_ID).toString())
         consejoList = consejoDAO.findAll()
-
+        //consejoDAO.insert(Consejo(-1, "Ir al otro sitio"))
         adapter.updateData(consejoList)
     }
 
@@ -196,6 +205,7 @@ class MainActivity : AppCompatActivity() {
 
     fun evaluaBusqueda(codigo:String?)
     {
+        mostrarDialog("Evalua Busqueda", "valor codigo")
         if (codigo == null)
             obtenerConsejos()
         else
@@ -240,8 +250,8 @@ class MainActivity : AppCompatActivity() {
 
                     }*/
                     runOnUiThread {
-                        mostrarDialog(result.toString(),result.toString(),false)
-                        //evaluaBusqueda(result.toString())
+                        //mostrarDialog(result.toString(),result.toString(),false)
+                        evaluaBusqueda(result.toString())
                     }
 
                 } else { // Hubo un error
@@ -249,6 +259,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.e("HTTP", "Response Error :: ${e.stackTraceToString()}")
+                mostrarDialog("ERROR", "error aqui")
             }
         }
     }

@@ -6,13 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".activities.BuscaActivity">
 
+    <com.example.consejeroapp.activities.CustomTabBar
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:entries="@array/tabs"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
 
-        <com.google.android.material.tabs.TabLayout
+
+
+       <!-- <com.google.android.material.tabs.TabLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flow_verticalAlign="baseline"
@@ -34,7 +47,7 @@
                 android:text="Old Searchs"
                 />
 
-        </com.google.android.material.tabs.TabLayout>
+        </com.google.android.material.tabs.TabLayout>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textField"
@@ -55,6 +68,7 @@
             />
 
     </com.google.android.material.textfield.TextInputLayout>
+
 
 
 
