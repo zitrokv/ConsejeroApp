@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.consejeroapp.data.Consejo
+import com.example.consejeroapp.databinding.CookieChooseBinding
 import com.example.consejeroapp.databinding.ItemMainBinding
 import com.google.android.material.checkbox.MaterialCheckBox.OnCheckedStateChangedListener
 
@@ -22,7 +23,8 @@ class ConsejoAdapter(private var dataSet: List<Consejo> = emptyList(),
     private var highlightText: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TareaViewHolder {
-        val binding = ItemMainBinding.inflate(LayoutInflater.from(parent.context),parent, false)
+        val bind = ItemMainBinding.inflate(LayoutInflater.from(parent.context),parent, false)
+        val binding = CookieChooseBinding.inflate(LayoutInflater.from(parent.context),parent, false)
         //return SuperheroViewHolder(ItemSuperheroBinding.bind(parent.rootView))
         return TareaViewHolder(binding)
     }
@@ -74,7 +76,7 @@ class ConsejoAdapter(private var dataSet: List<Consejo> = emptyList(),
 
 }
 
-class TareaViewHolder(val binding: ItemMainBinding) : RecyclerView.ViewHolder(binding.root)
+class TareaViewHolder(val binding: CookieChooseBinding) : RecyclerView.ViewHolder(binding.root)
 {
     fun render(tarea: Consejo){
         binding.nameTextView.text = tarea.texto

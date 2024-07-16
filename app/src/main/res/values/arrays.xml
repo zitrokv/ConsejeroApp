@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="tabs">
-        <item>Video</item>
-        <item>Photos</item>
-        <item>Audio</item>
+        <item>User</item>
+        <item>Main</item>
+        <item>Old Advices</item>
+        <item>User</item>
+        <item>Main</item>
+        <item>Old Advices</item>
     </array>
 </resources>

@@ -47,10 +47,17 @@ class ConsejoDAO(context: Context) {
     }
 
 
-    fun delete(tarea:Consejo)
+    fun delete(consejo:Consejo) : Int
     {
-        val db = databaseManager.writableDatabase
-        val deletedRows = db.delete(Consejo.TABLE_NAME, "${BaseColumns._ID} = ${tarea.id}",null)
+        var deletedRows = 0
+        if (findAll().count() > 1) {
+            val db = databaseManager.writableDatabase
+            deletedRows =
+                db.delete(Consejo.TABLE_NAME, "${BaseColumns._ID} = ${consejo.id}", null)
+        }
+
+        //devuelve el numero de filas afectadas, borradas -> si es Cero, entonces mostrar mensaje
+        return deletedRows
     }
 
     fun find(id: Int):Consejo? {
@@ -68,18 +75,19 @@ class ConsejoDAO(context: Context) {
             null
         )
 
-        var tarea: Consejo? = null
+        var consejo: Consejo? = null
         if (cursor.moveToNext()){
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
+            val adviceID = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_TEXTO))
             val cota = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_COTA))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_LEIDA)) == 1
-            tarea = Consejo(id, name, cota, done)
+            consejo = Consejo(id, adviceID, name, cota, done)
         }
 
         cursor.close()
         db.close()
-        return tarea
+        return consejo
     }
     fun findAll() : List<Consejo> {
         val db = databaseManager.readableDatabase
@@ -99,10 +107,11 @@ class ConsejoDAO(context: Context) {
         var tasks = mutableListOf<Consejo>()
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID))
+            val adviceID = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_ID))
             val name = cursor.getString(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_TEXTO))
             val cota = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_COTA))
             val done = cursor.getInt(cursor.getColumnIndexOrThrow(Consejo.COLUMNA_LEIDA)) == 1
-            val task = Consejo(id, name, cota, done)
+            val task = Consejo(id, adviceID, name, cota, done)
             tasks.add(task)
         }
         cursor.close()

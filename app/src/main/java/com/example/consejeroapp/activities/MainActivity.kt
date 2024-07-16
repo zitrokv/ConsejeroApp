@@ -3,6 +3,7 @@ package com.example.consejeroapp.activities
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -43,7 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         val id = intent.getStringExtra(Consejo.PUTEXTRA_ID)
 
-        Funciones.GuardaResultadoConsulta(this, (id))
+        Funciones.GuardaResultadoConsulta(this, (id).toString())
+
+        //Funciones.GuardaResultadoConsultaDAO(consejoDAO, (id.toString()) )
                 /*
                 Funciones.GuardaResultadoConsulta(this, (id
             ?: (Funciones.GuardaResultadoAleatorio((this))) ))
@@ -62,9 +65,25 @@ class MainActivity : AppCompatActivity() {
                 ).show()*/
             },
             {
-                consejoDAO.delete(consejoList[it])
-                consejoDAO.update(consejoList[it])
-                loadData()
+                if (consejoDAO.delete(consejoList[it]) == 0) {
+                    //Toast.makeText(this, id.toString(), Toast.LENGTH_SHORT).show()
+                    /*val intent : Intent = Intent(this, BuscaActivity::class.java) //::class.java
+                    intent.putExtra(Consejo.SEARCH_ID, id.toString())
+                    //si quieres ver la activity esto es necesario
+                    startActivity(intent)*/
+
+                    obtenerConsejosByID(id.toString())
+
+                   //obtenerConsejosByQuery(id.toString())
+                    //Funciones.obtenerConsejos()
+                    //evaluaBusqueda(id)
+                    //evaluaBusqueda(consejoList[it].texto)
+                    //mostrarDialog(consejoList[it].texto, consejoList[it].texto)
+                }
+                else {
+                    consejoDAO.update(consejoList[it])
+                    loadData()
+                }
             },
 
             {
@@ -106,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
 
-        //builder.setMessage("Fecha a rellenar...")
+        builder.setMessage(title)
 //builder.setPositiveButton("OK", DialogInterface.OnClickListener(function = x))
 
         /*val dialogBinding = ActivityDetalleBinding.inflate(layoutInflater)
@@ -264,7 +283,61 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun obtenerConsejosByQuery(query:String) {
+
+
+
+    fun obtenerConsejosByID(queryID:String?) {
+        if (queryID.isNullOrEmpty()) {
+            obtenerConsejos()
+            //mostrarDialog(queryID.toString(), queryID.toString())
+        }else
+        // Llamada en hilo secundario
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    // Declaramos la url
+                    //val url = URL("https://api.adviceslip.com/advice")
+                    val url = URL(" https://api.adviceslip.com/advice/$queryID")
+                    val con = url.openConnection() as HttpsURLConnection
+                    con.requestMethod = "GET"
+                    val responseCode = con.responseCode
+                    Log.i("HTTP", "Response Code :: $responseCode")
+
+                    // Preguntamos si hubo error o no
+                    if (responseCode == HttpsURLConnection.HTTP_OK) { // Ha ido bien
+                        // Metemos el cuerpo de la respuesta en un BurfferedReader
+                        val bufferedReader = BufferedReader(InputStreamReader(con.inputStream))
+                        var inputLine: String?
+                        val response = StringBuffer()
+                        while (bufferedReader.readLine().also { inputLine = it } != null) {
+                            response.append(inputLine)
+                        }
+                        bufferedReader.close()
+
+                        // Parsear JSON
+                        val json = JSONObject(response.toString())
+                        val result =  json.getJSONObject("slip").getString("advice")
+
+                        // Ejecutamos en el hilo principal
+                        /*CoroutineScope(Dispatchers.Main).launch {
+
+                        }*/
+                        runOnUiThread {
+                            mostrarDialog(result.toString(),result.toString(),false)
+                        }
+
+                    } else { // Hubo un error
+                        Log.w("HTTP", "Response :: Hubo un error")
+                    }
+                } catch (e: Exception) {
+                    Log.e("HTTP", "Response Error :: ${e.stackTraceToString()}")
+                }
+            }
+    }
+    fun obtenerConsejosByQuery(query:String?) {
+        if (query.isNullOrEmpty()) {
+            //obtenerConsejos()
+            mostrarDialog(query.toString(), query.toString())
+        }else
         // Llamada en hilo secundario
         CoroutineScope(Dispatchers.IO).launch {
             try {
